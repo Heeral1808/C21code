@@ -1,55 +1,45 @@
-var bullet, speed, weight;
-var wall, thickness;
+const Engine = Matter.Engine;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
 
-
+var ground, gameState,engine, world,dustbin,paper;
 function setup() {
-  createCanvas(1600,400);
-thickness = random(22, 83);
-speed = random(223, 321);
-weight = random(30, 52);
+  createCanvas(800, 400);
+  rectMode(CENTER);
 
- wall = createSprite(1200, 200, thickness, height/2);
- wall.shapeColor = color(230,230,230);
- 
- bullet = createSprite(200, 200, 70, 30);
- bullet.velocityX = speed;
- bullet.shapeColor = "white";}
+  gameState = "play";
 
- function draw() {
-  background(0,0, 0);  
-  
-  if(isTouching(bullet, wall))
+  engine = Engine.create();
+  world = engine.world;
+  Engine.run(engine);
+
+  dustbin = new DustBin(600, 390, 100, 10);
+  paper = new Paper(100, 300, 10);
+  ground = Bodies.rectangle(width / 2, 400, width, 10,
   {
-  	bullet.velocityX = 0;
-  	var damage = 0.5 * weight * speed* speed/(thickness *thickness *thickness);}
-  	
-	if(damage>10)
-	{
-		wall.shapeColor = color(255,0,0);
-		
-	}
+    isStatic: true
+  });
+  World.add(world, ground);
+}
 
-	if(damage<10)
-	{
-		wall.shapeColor=color(0,255,0);
-	}
-	drawSprites();
-  }
-
-
+function draw() {
   
- 
+  if (gameState === "play") {
+    rectMode(CENTER);
+    background(0);
+    dustbin.display();
+    paper.display();
 
-
-
-function isTouching(lbullet, lwall)
-  {
-    bulletRightEdge=lbullet.x +lbullet.width;
-    wallLeftEdge=lwall.x;
-    if (bulletRightEdge>=wallLeftEdge)
-    {
-      return true
-    }
-    return false;
   }
-  
+}
+
+
+function keyPressed(){
+  if (keyCode === UP_ARROW && gameState === "play") {
+    Matter.Body.applyForce(paper.body, paper.body.position, {
+      x: 12,
+      y: -13
+    });
+  }
+}

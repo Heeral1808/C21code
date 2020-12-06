@@ -1,45 +1,49 @@
 const Engine = Matter.Engine;
-const World = Matter.World;
+const World= Matter.World;
 const Bodies = Matter.Bodies;
-const Body = Matter.Body;
 
-var ground, gameState,engine, world,dustbin,paper;
-function setup() {
-  createCanvas(800, 400);
-  rectMode(CENTER);
+var engine, world;
+var ground,ball;
+var binImg,bin;
 
-  gameState = "play";
+function preload(){
+    binImg = loadImage("Images/dustbingreen.png");
+}
+function setup(){
+    var canvas = createCanvas(1200,600);
+    engine = Engine.create();
+    world = engine.world;
 
-  engine = Engine.create();
-  world = engine.world;
-  Engine.run(engine);
+    ground = new Ground();
+    crumpledPaper = new Paper();
 
-  dustbin = new DustBin(600, 390, 100, 10);
-  paper = new Paper(100, 300, 10);
-  ground = Bodies.rectangle(width / 2, 400, width, 10,
-  {
-    isStatic: true
-  });
-  World.add(world, ground);
+    bin = createSprite(964,520,20,20);
+    bin.addImage(binImg);
+    bin.scale = 0.45;
+
+    binPart1 = new Dustbin(902,505,10,120);
+    binPart2 = new Dustbin(962,565,130,10);
+    binPart3 = new Dustbin(1024,505,10,120);
 }
 
-function draw() {
-  
-  if (gameState === "play") {
-    rectMode(CENTER);
+function draw(){
     background(0);
-    dustbin.display();
-    paper.display();
+    Engine.update(engine);
 
-  }
+    //text(mouseX+","+mouseY,200,200);
+
+    
+    ground.display();
+    crumpledPaper.display();
+    binPart1.display();
+    binPart2.display();
+    binPart3.display(); 
+      
+    drawSprites();
 }
-
 
 function keyPressed(){
-  if (keyCode === UP_ARROW && gameState === "play") {
-    Matter.Body.applyForce(paper.body, paper.body.position, {
-      x: 12,
-      y: -13
-    });
-  }
+    if(keyCode === UP_ARROW){
+        Matter.Body.applyForce(crumpledPaper.body,crumpledPaper.body.position,{x:74,y:-75});
+    }
 }
